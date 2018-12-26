@@ -1,5 +1,5 @@
 FamiTone2 audio library v1.15 by Shiru 04'17
-Game boy port v1.0, 2019, Doug Fraker
+Game boy port v1.1, 2019, Doug Fraker
 
 
 
@@ -131,7 +131,7 @@ CPU usage
 -21 vertical lines of 153 or 7% of the frame.
 
 ROM Space
--$729 aka 1833 bytes
+-$732 aka 1842 bytes
 
 RAM usage
 -141 bytes of standard RAM

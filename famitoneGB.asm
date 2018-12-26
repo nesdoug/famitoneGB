@@ -1,5 +1,5 @@
 ; FamiTone2 v1.12, by Shiru
-; Gameboy port v1.0, 2019, Doug Fraker
+; Gameboy port v1.1, 2019, Doug Fraker
 ; use with text2dataGB, nsf2dataGB, nsf_fix.py (see usage.txt)
 ; for rgbds assembler
 
@@ -998,6 +998,14 @@ final_output2:
 	
 	
 final_output3:
+	ld a, [FT_WAV_TRIG]
+	or a ;set z flag
+	jr z, .no_wav_trig
+	xor a ;a=0
+	ldh [rNR30], a	; there is a wave ram bug in the original
+					; gameboy, and turning nNR30 off and on
+					; before trigger should prevent it.
+.no_wav_trig
 	ld a, $80
 	ldh [rNR30], a ; double checking, is on
 	ld a, [FT_MR_WAV_V]

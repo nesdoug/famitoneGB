@@ -350,7 +350,7 @@ memcpy:
 	ret	
 	
 run_dma_master:
-	ld a, $ce ;ce00 ram = oam buffer
+	ld a, $cf ;cf00 ram = oam buffer
 	ldh [rDMA],a
 	ld a, 40
 .loop:
