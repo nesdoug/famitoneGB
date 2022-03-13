@@ -1,6 +1,6 @@
 update - 3/11/2022
 -now compatible with 0cc-Famitracker and Dn-Famitracker
--fixed a bug in text2vol5 (undefined behavior) 
+-fixed a bug in text2dataGB (undefined behavior) 
  that might have caused incorrect output
  
 
