@@ -5,7 +5,7 @@
 // dpcm code has been deleted or commented out...
 // I may have left some in by accident
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -98,10 +98,10 @@ songStruct song_split;
 instrumentStruct instruments[MAX_INSTRUMENTS];
 //deleted dpcm
 
-char *text_src = NULL;
+char* text_src = NULL;
 int text_size;
 
-FILE *outfile = NULL;
+FILE* outfile = NULL;
 
 struct outputEnvelopeStruct {
 	unsigned char data[MAX_ENVELOPE_LEN + 2];
@@ -139,11 +139,11 @@ char songName1[1024];
 
 
 
-bool text_open(char *filename)
+bool text_open(char* filename)
 {
-	FILE *file;
+	FILE* file;
 	int ps, pd, size;
-	char *text;
+	char* text;
 	char c;
 
 	file = fopen(filename, "rb");
@@ -170,7 +170,7 @@ bool text_open(char *filename)
 	ps = 0;
 	pd = 0;
 
-	while (ps<size)
+	while (ps < size)
 	{
 		c = text[ps++];
 
@@ -206,7 +206,7 @@ void text_close(void)
 
 int text_skip_line(int off)
 {
-	while (off<text_size)
+	while (off < text_size)
 	{
 		if (text_src[off++] == 0x0a) break;
 	}
@@ -217,7 +217,7 @@ int text_skip_line(int off)
 
 int text_skip_spaces(int off)
 {
-	while (off<text_size) if (text_src[off] == ' ') ++off; else break;
+	while (off < text_size) if (text_src[off] == ' ') ++off; else break;
 
 	return off;
 }
@@ -229,11 +229,11 @@ int text_skip_dec_and_spaces(int off)
 
 	off = text_skip_spaces(off);
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		n = text_src[off];
 
-		if (!((n >= '0'&&n <= '9') || n == '-')) break;
+		if (!((n >= '0' && n <= '9') || n == '-')) break;
 
 		++off;
 	}
@@ -248,11 +248,11 @@ int text_skip_hex_and_spaces(int off)
 
 	off = text_skip_spaces(off);
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		n = text_src[off];
 
-		if (!((n >= '0'&&n <= '9') || (n >= 'a'&&n <= 'f') || (n >= 'A'&&n <= 'F'))) break;
+		if (!((n >= '0' && n <= '9') || (n >= 'a' && n <= 'f') || (n >= 'A' && n <= 'F'))) break;
 
 		++off;
 	}
@@ -261,11 +261,11 @@ int text_skip_hex_and_spaces(int off)
 }
 
 
-int text_find_tag(const char *tag, int off)
+int text_find_tag(const char* tag, int off)
 {
 	int i;
 
-	for (i = off; i<text_size - (int)strlen(tag); ++i)
+	for (i = off; i < text_size - (int)strlen(tag); ++i)
 	{
 		if (!memcmp(&text_src[i], tag, strlen(tag))) return text_skip_spaces(i + strlen(tag));
 	}
@@ -274,11 +274,11 @@ int text_find_tag(const char *tag, int off)
 }
 
 
-int text_find_tag_start_sub_song(const char *tag, int off)
+int text_find_tag_start_sub_song(const char* tag, int off)
 {
 	int i;
 
-	for (i = off; i<text_size - (int)strlen(tag); ++i)
+	for (i = off; i < text_size - (int)strlen(tag); ++i)
 	{
 		if (!memcmp(&text_src[i], "TRACK", 5)) return -1;
 
@@ -291,7 +291,7 @@ int text_find_tag_start_sub_song(const char *tag, int off)
 
 int text_skip_tag(int off)
 {
-	while (off<text_size)
+	while (off < text_size)
 	{
 		if (text_src[off] <= ' ') break;
 
@@ -302,9 +302,9 @@ int text_skip_tag(int off)
 }
 
 
-int text_find_tag_section(const char *tag, int off)
+int text_find_tag_section(const char* tag, int off)
 {
-	while (off<text_size - (int)strlen(tag))
+	while (off < text_size - (int)strlen(tag))
 	{
 		if (text_src[off] == '[') break;
 
@@ -317,11 +317,11 @@ int text_find_tag_section(const char *tag, int off)
 }
 
 
-int text_find_tag_start(const char *tag, int off)
+int text_find_tag_start(const char* tag, int off)
 {
 	int i;
 
-	for (i = off; i<text_size - (int)strlen(tag); ++i)
+	for (i = off; i < text_size - (int)strlen(tag); ++i)
 	{
 		if (!memcmp(&text_src[i], tag, strlen(tag))) return i;
 	}
@@ -346,24 +346,24 @@ int text_read_dec(int off)
 		sign = 1;
 	}
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		n = text_src[off++];
 
-		if (n<'0' || n>'9') break;
+		if (n < '0' || n>'9') break;
 
 		num = num * 10 + n - '0';
 	}
 
-	return num*sign;
+	return num * sign;
 }
 
 
 int hex(char c)
 {
-	if (c >= '0'&&c <= '9') return c - '0';
-	if (c >= 'A'&&c <= 'F') return c - 'A' + 10;
-	if (c >= 'a'&&c <= 'f') return c - 'a' + 10;
+	if (c >= '0' && c <= '9') return c - '0';
+	if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+	if (c >= 'a' && c <= 'f') return c - 'a' + 10;
 
 	return -1;
 }
@@ -375,11 +375,11 @@ int text_read_hex(int off)
 
 	num = 0;
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		n = hex(text_src[off++]);
 
-		if (n<0) break;
+		if (n < 0) break;
 
 		num = num * 16 + n;
 	}
@@ -420,11 +420,11 @@ void clear_instruments(void)
 }
 
 
-void parse_error(int off, const char *str)
+void parse_error(int off, const char* str)
 {
 	int ptr, row, col;
 
-	if (off<0)
+	if (off < 0)
 	{
 		printf("Parsing error: %s\n", str);
 	}
@@ -434,7 +434,7 @@ void parse_error(int off, const char *str)
 		col = 1;
 		ptr = 0;
 
-		while (ptr<off)
+		while (ptr < off)
 		{
 			if (text_src[ptr++] == '\n')
 			{
@@ -452,7 +452,7 @@ void parse_error(int off, const char *str)
 }
 
 
-void parse_error_ptn(int song, int pos, int row, int chn, const char *str)
+void parse_error_ptn(int song, int pos, int row, int chn, const char* str)
 {
 	printf("Parsing error (song:%2.2i pos:%2.2x row:%2.2x chn %i): %s\n", song + 1, pos, row, chn, str);
 
@@ -462,12 +462,12 @@ void parse_error_ptn(int song, int pos, int row, int chn, const char *str)
 
 void parse_instruments_old(void)
 {
-	const char *seqTypeCount[4] = { "SequencesVolumeCount=","SequencesArpeggioCount=","SequencesPitchCount=","SequencesDutyCount=" };
-	const char *seqTypeSection[4] = { "[SequencesVolume]","[SequencesArpeggio]","[SequencesPitch]","[SequencesDuty]" };
-	const char *seqTypeName[4] = { "SequenceVolume","SequenceArpeggio","SequencePitch","SequenceDuty" };
+	const char* seqTypeCount[4] = { "SequencesVolumeCount=","SequencesArpeggioCount=","SequencesPitchCount=","SequencesDutyCount=" };
+	const char* seqTypeSection[4] = { "[SequencesVolume]","[SequencesArpeggio]","[SequencesPitch]","[SequencesDuty]" };
+	const char* seqTypeName[4] = { "SequenceVolume","SequenceArpeggio","SequencePitch","SequenceDuty" };
 	char str[128];
 	int i, n, id, off, ptr, cnt, pos, type, ins, ins_id;
-	envelopeStruct *env;
+	envelopeStruct* env;
 
 	subSongsCount = 1;//old text format does not support multisong
 
@@ -476,33 +476,33 @@ void parse_instruments_old(void)
 	off = 0;
 	ins_id = 0;
 
-	for (i = 0; i<MAX_INSTRUMENTS; ++i)
+	for (i = 0; i < MAX_INSTRUMENTS; ++i)
 	{
 		off = text_find_tag("[Instrument", off);
 
-		if (off<0) break;
+		if (off < 0) break;
 
 		ins = text_read_dec(off);
 
-		if (ins>63) parse_error(off, "Only 64 instruments (0..63) are supported");
+		if (ins > 63) parse_error(off, "Only 64 instruments (0..63) are supported");
 
 		off = text_skip_line(off);
 
 		n = text_find_tag_section("SequenceVolume=", off);
 
-		instruments[ins].volume = n<0 ? -1 : text_read_dec(n);
+		instruments[ins].volume = n < 0 ? -1 : text_read_dec(n);
 
 		n = text_find_tag_section("SequenceArpeggio=", off);
 
-		instruments[ins].arpeggio = n<0 ? -1 : text_read_dec(n);
+		instruments[ins].arpeggio = n < 0 ? -1 : text_read_dec(n);
 
 		n = text_find_tag_section("SequencePitch=", off);
 
-		instruments[ins].pitch = n<0 ? -1 : text_read_dec(n);
+		instruments[ins].pitch = n < 0 ? -1 : text_read_dec(n);
 
 		n = text_find_tag_section("SequenceDuty=", off);
 
-		instruments[ins].duty = n<0 ? -1 : text_read_dec(n);
+		instruments[ins].duty = n < 0 ? -1 : text_read_dec(n);
 
 		instruments[ins].id = ins_id;
 
@@ -516,11 +516,11 @@ void parse_instruments_old(void)
 
 	//parse envelopes
 
-	for (type = 0; type<4; ++type)
+	for (type = 0; type < 4; ++type)
 	{
 		off = text_find_tag(seqTypeCount[type], 0);
 
-		if (off<0) parse_error(off, "SequenceTypeCount not found");
+		if (off < 0) parse_error(off, "SequenceTypeCount not found");
 
 		cnt = text_read_dec(off);
 		id = 0;
@@ -539,6 +539,7 @@ void parse_instruments_old(void)
 
 				switch (type)
 				{
+				default: // ** fix build error, overly cautious compiler
 				case 0: env = &envelopeVolume[id]; break;
 				case 1: env = &envelopeArpeggio[id]; break;
 				case 2: env = &envelopePitch[id]; break;
@@ -547,9 +548,9 @@ void parse_instruments_old(void)
 
 				env->loop = -1;
 
-				while (ptr<text_size)
+				while (ptr < text_size)
 				{
-					if (text_src[ptr]<32) break;
+					if (text_src[ptr] < 32) break;
 
 					if (text_src[ptr] == '|')
 					{
@@ -559,13 +560,13 @@ void parse_instruments_old(void)
 
 					n = text_read_dec(ptr);
 
-					if (n<-64 || n>63) parse_error(off, "Envelope value is out of range (-64..63)\n");
+					if (n < -64 || n>63) parse_error(off, "Envelope value is out of range (-64..63)\n");
 
 					env->value[pos++] = n;
 
-					while (ptr<text_size)
+					while (ptr < text_size)
 					{
-						if (text_src[ptr]<32) break;
+						if (text_src[ptr] < 32) break;
 						if (text_src[ptr++] == ',') break;
 					}
 				}
@@ -581,8 +582,8 @@ void parse_instruments_old(void)
 
 	//parse samples
 
-	return; 
-	
+	return;
+
 	//deleted dpcm
 }
 
@@ -595,22 +596,22 @@ void parse_song_old(void)
 
 	off = 0;
 
-	if ((off = text_find_tag("Speed=", off))<0) parse_error(off, "Speed not found");
+	if ((off = text_find_tag("Speed=", off)) < 0) parse_error(off, "Speed not found");
 
 	song_original.speed = text_read_dec(off);
 	song_original.tempo = 150;
 
-	if ((off = text_find_tag("FramesCount=", off))<0) parse_error(off, "Frames count not found");
+	if ((off = text_find_tag("FramesCount=", off)) < 0) parse_error(off, "Frames count not found");
 
 	song_original.order_length = text_read_dec(off);
 
-	if ((off = text_find_tag("PatternLength=", off))<0) parse_error(off, "Pattern length not found");
+	if ((off = text_find_tag("PatternLength=", off)) < 0) parse_error(off, "Pattern length not found");
 
 	song_original.pattern_length = text_read_dec(off);
 
 	song_break = false;
 
-	for (pos = 0; pos<song_original.order_length; ++pos)
+	for (pos = 0; pos < song_original.order_length; ++pos)
 	{
 		song_original.pattern[pos].length = song_original.pattern_length;
 
@@ -618,13 +619,13 @@ void parse_song_old(void)
 
 		off = text_find_tag(str, off);
 
-		if (off<0) parse_error(off, "Frame not found");
+		if (off < 0) parse_error(off, "Frame not found");
 
 		off = text_skip_line(off);
 
 		pattern_break = false;
 
-		for (row = 0; row<song_original.pattern_length; ++row)
+		for (row = 0; row < song_original.pattern_length; ++row)
 		{
 			n = text_read_hex(off);
 
@@ -632,7 +633,7 @@ void parse_song_old(void)
 
 			off += 3;
 
-			for (chn = 0; chn<channels; ++chn)
+			for (chn = 0; chn < channels; ++chn)
 			{
 				switch (text_src[off])
 				{
@@ -650,16 +651,16 @@ void parse_song_old(void)
 
 				if (text_src[off + 1] == '#') ++note;
 
-				if (note>1)
+				if (note > 1)
 				{
 					note += 12 * text_read_dec(off + 2);//add octave
 
-					if (note<12 + 2 || note >= 12 * 6 + 2 + 3) parse_error_ptn(0, pos, row, chn, "Note is out of supported range (C-1..D-6)");
+					if (note < 12 + 2 || note >= 12 * 6 + 2 + 3) parse_error_ptn(0, pos, row, chn, "Note is out of supported range (C-1..D-6)");
 
 					note -= 12;//correct range
 				}
 
-				if (chn == 3 && note>1) note = ((note - 2 + 11) & 15) + 2;//uniform notes in the noise channel
+				if (chn == 3 && note > 1) note = ((note - 2 + 11) & 15) + 2;//uniform notes in the noise channel
 
 																		  /*				if (chn == 4 && note>1)//check note range in the DPCM channel
 																		  {
@@ -670,7 +671,7 @@ void parse_song_old(void)
 
 				if (text_src[off + 4] == '.') ins = -1; else ins = text_read_hex(off + 4);
 
-				if (ins>63) parse_error_ptn(0, pos, row, chn, "Instrument number is out of range (0..63)");
+				if (ins > 63) parse_error_ptn(0, pos, row, chn, "Instrument number is out of range (0..63)");
 
 				song_original.pattern[pos].row[row].channel[chn].note = note;
 				song_original.pattern[pos].row[row].channel[chn].instrument = ins;
@@ -687,7 +688,7 @@ void parse_song_old(void)
 					song_original.pattern[pos].length = row + 1;
 					song_break = true;
 
-					if (song_original.order_loop>pos) parse_error_ptn(0, pos, row, chn, "Bxx loop position can't be a forward reference");
+					if (song_original.order_loop > pos) parse_error_ptn(0, pos, row, chn, "Bxx loop position can't be a forward reference");
 
 					break;
 
@@ -718,7 +719,7 @@ void parse_song_old(void)
 void parse_instruments(void)
 {
 	int n, off, ptr, id, type, loop, ins, octave, note, pitch, ins_id;
-	envelopeStruct *env;
+	envelopeStruct* env;
 	static char str[1024];
 
 	//check how many sub songs are there
@@ -730,24 +731,24 @@ void parse_instruments(void)
 	{
 		off = text_find_tag("TRACK", off);
 
-		if (off<0) break;
+		if (off < 0) break;
 
 		++subSongsCount;
 	}
 
-	if (subSongsCount>MAX_SUB_SONGS) parse_error(0, "Too many sub songs");
+	if (subSongsCount > MAX_SUB_SONGS) parse_error(0, "Too many sub songs");
 
 	//parse envelopes
 
 	off = text_find_tag("# Macros", 0);
 
-	if (off<0) parse_error(off, "Macros section not found");
+	if (off < 0) parse_error(off, "Macros section not found");
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		off = text_find_tag("MACRO", off);
 
-		if (off<0) break;
+		if (off < 0) break;
 
 		type = text_read_dec(off);//macro group number
 
@@ -755,7 +756,7 @@ void parse_instruments(void)
 
 		id = text_read_dec(off);//macro id in a group
 
-		if (id>MAX_ENVELOPES) parse_error(off, "Macro number is too large");
+		if (id > MAX_ENVELOPES) parse_error(off, "Macro number is too large");
 
 		off = text_skip_dec_and_spaces(off);
 
@@ -787,7 +788,7 @@ void parse_instruments(void)
 			off += 2;
 			ptr = 0;
 
-			while (off<text_size)
+			while (off < text_size)
 			{
 				if (text_src[off] == '\n') break;
 
@@ -809,11 +810,11 @@ void parse_instruments(void)
 
 	off = text_find_tag("# Instruments", off);
 
-	if (off<0) parse_error(off, "Instruments section not found");
+	if (off < 0) parse_error(off, "Instruments section not found");
 
 	ins_id = 0;
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		off = text_skip_line(off);
 
@@ -823,15 +824,15 @@ void parse_instruments(void)
 
 			ins = text_read_dec(off);//instrument number
 
-			if (ins<0 || ins >= MAX_INSTRUMENTS) parse_error(off, "Wrong instrument number");
+			if (ins < 0 || ins >= MAX_INSTRUMENTS) parse_error(off, "Wrong instrument number");
 
-			if (ins>63) parse_error(off, "Only 64 instruments (0..63) supported");
+			if (ins > 63) parse_error(off, "Only 64 instruments (0..63) supported");
 
 			off = text_skip_dec_and_spaces(off);
 
 			instruments[ins].volume = text_read_dec(off);//volume envelope id
 
-			if (instruments[ins].volume<0)
+			if (instruments[ins].volume < 0)
 			{
 				sprintf(str, "Instrument %i does not have volume envelope", ins);
 				parse_error(off, str);
@@ -880,7 +881,7 @@ void parse_instruments(void)
 
 			note = text_read_dec(off);//note
 
-			if ((octave * 12 + note)<1 * 12 || (octave * 12 + note) >= 6 * 12 + 3) parse_error(off, "DPCM samples could only be assigned to notes C-1..D-6");
+			if ((octave * 12 + note) < 1 * 12 || (octave * 12 + note) >= 6 * 12 + 3) parse_error(off, "DPCM samples could only be assigned to notes C-1..D-6");
 
 			ins = (octave - 1) * 12 + note;
 
@@ -928,7 +929,7 @@ void parse_song(int subsong, bool header_only)
 	char str[128];
 	int i, n, row, pos, off, ptn, chn, note, ins, maxptn, off_prev;
 	int shortest; // **
-	channelStruct *nsrc, *ndst;
+	channelStruct* nsrc, * ndst;
 
 	if (subsong >= subSongsCount) parse_error(0, "No sub song found");
 
@@ -936,7 +937,7 @@ void parse_song(int subsong, bool header_only)
 
 	for (i = 0; i <= subsong; ++i) off = text_find_tag("TRACK", off);
 
-	if (off<0) parse_error(off, "Can't find track section");
+	if (off < 0) parse_error(off, "Can't find track section");
 
 	off = text_skip_spaces(off);
 
@@ -975,7 +976,7 @@ void parse_song(int subsong, bool header_only)
 
 	off = text_find_tag_start("ORDER", off);
 
-	while (off<text_size)
+	while (off < text_size)
 	{
 		if (text_src[off] != 'O') break;
 
@@ -985,7 +986,7 @@ void parse_song(int subsong, bool header_only)
 		order[pos][3] = text_read_hex(off + 20);
 		// order[pos][4] = text_read_hex(off + 23);
 
-		for (chn = 0; chn<channels; ++chn) if (order[pos][chn]>maxptn) maxptn = order[pos][chn];
+		for (chn = 0; chn < channels; ++chn) if (order[pos][chn] > maxptn) maxptn = order[pos][chn];
 
 		off = text_skip_line(off);
 
@@ -1008,13 +1009,13 @@ void parse_song(int subsong, bool header_only)
 
 		off = text_find_tag_start_sub_song(str, off);
 
-		if (off<0)//pattern not found, could be caused by the Famitracker cleanup, just skip it
+		if (off < 0)//pattern not found, could be caused by the Famitracker cleanup, just skip it
 		{
 			off = off_prev;
 
-			for (row = 0; row<song_original.pattern_length; ++row)
+			for (row = 0; row < song_original.pattern_length; ++row)
 			{
-				for (chn = 0; chn<channels; ++chn)
+				for (chn = 0; chn < channels; ++chn)
 				{
 					pattern[ptn].row[row].channel[chn].note = 0;
 					pattern[ptn].row[row].channel[chn].instrument = 0;
@@ -1030,7 +1031,7 @@ void parse_song(int subsong, bool header_only)
 
 		off = text_skip_line(off);
 
-		for (row = 0; row<song_original.pattern_length; ++row)
+		for (row = 0; row < song_original.pattern_length; ++row)
 		{
 			if (memcmp(&text_src[off], "ROW", 3))
 			{
@@ -1040,7 +1041,7 @@ void parse_song(int subsong, bool header_only)
 
 			if (text_read_hex(off + 4) != row) parse_error(off, "Unexpected row number");
 
-			for (chn = 0; chn<channels; ++chn)
+			for (chn = 0; chn < channels; ++chn)
 			{
 				while (text_src[off++] != ':');//skip to a channel position, regardless of number of effect columns
 
@@ -1066,11 +1067,11 @@ void parse_song(int subsong, bool header_only)
 
 					if (text_src[off + 1] == '#') ++note;
 
-					if (note>1)
+					if (note > 1)
 					{
 						note += 12 * text_read_dec(off + 2);//add octave
 
-						if (note<2 + 12 || note >= 2 + 12 + 63) parse_error(off, "Note is out of supported range (C-1..D-6)");
+						if (note < 2 + 12 || note >= 2 + 12 + 63) parse_error(off, "Note is out of supported range (C-1..D-6)");
 
 						note -= 12;//correct range
 					}
@@ -1090,7 +1091,7 @@ void parse_song(int subsong, bool header_only)
 
 				if (text_src[off + 4] == '.') ins = -1; else ins = text_read_hex(off + 4);
 
-				if (ins>63) parse_error(off, "Instrument number is out of range (0..63)");
+				if (ins > 63) parse_error(off, "Instrument number is out of range (0..63)");
 
 				pattern[ptn].row[row].channel[chn].note = note;
 				pattern[ptn].row[row].channel[chn].instrument = ins;
@@ -1108,15 +1109,15 @@ void parse_song(int subsong, bool header_only)
 
 	//convert order list and patterns into song, reordering patterns into linear order
 
-	for (pos = 0; pos<song_original.order_length; ++pos)
+	for (pos = 0; pos < song_original.order_length; ++pos)
 	{
 		song_original.pattern[pos].length = song_original.pattern_length;
 
 		shortest = song_original.pattern_length; // ** set full size, then shrink if D00/Bxx
 
-		for (chn = 0; chn<channels; ++chn)
+		for (chn = 0; chn < channels; ++chn)
 		{
-			for (row = 0; row<song_original.pattern_length; ++row)
+			for (row = 0; row < song_original.pattern_length; ++row)
 			{
 				nsrc = &pattern[order[pos][chn]].row[row].channel[chn];
 				ndst = &song_original.pattern[pos].row[row].channel[chn];
@@ -1140,7 +1141,7 @@ void parse_song(int subsong, bool header_only)
 
 					row = MAX_ROWS;//stop parsing current pattern
 
-					if (song_original.order_loop>pos) parse_error_ptn(subsong, pos, row, chn, "Bxx loop position can't be a forward reference");
+					if (song_original.order_loop > pos) parse_error_ptn(subsong, pos, row, chn, "Bxx loop position can't be a forward reference");
 				}
 				break;
 
@@ -1188,26 +1189,26 @@ void parse_song(int subsong, bool header_only)
 void song_cleanup_instrument_numbers(void)
 {
 	int chn, pos, row, ins, speed;
-	channelStruct *ch;
+	channelStruct* ch;
 	int insloop[5];
 	bool stop;
 
-	for (chn = 0; chn<channels; ++chn) insloop[chn] = -1;
+	for (chn = 0; chn < channels; ++chn) insloop[chn] = -1;
 
-	for (chn = 0; chn<channels; ++chn)
+	for (chn = 0; chn < channels; ++chn)
 	{
 		ins = -1;
 		speed = 0;
 
-		for (pos = 0; pos<song_original.order_length; ++pos)
+		for (pos = 0; pos < song_original.order_length; ++pos)
 		{
-			for (row = 0; row<song_original.pattern[pos].length; ++row)
+			for (row = 0; row < song_original.pattern[pos].length; ++row)
 			{
 				ch = &song_original.pattern[pos].row[row].channel[chn];
 
-				if (chn<4)//pulse, triangle, and noise channels
+				if (chn < 4)//pulse, triangle, and noise channels
 				{
-					if (ch->note<2 && ch->instrument >= 0) ch->instrument = -1;//ignore instrument numbers at empty rows and rest notes
+					if (ch->note < 2 && ch->instrument >= 0) ch->instrument = -1;//ignore instrument numbers at empty rows and rest notes
 
 					if (ch->instrument >= 0)
 					{
@@ -1247,28 +1248,28 @@ void song_cleanup_instrument_numbers(void)
 			}
 		}
 
-		if (ins<0) ins = 0;
+		if (ins < 0) ins = 0;
 
 		//if (chn<4) insloop[chn] = ins; // **
 	}
 
 	//set current instrument number for first actual note after the loop point
 
-	for (chn = 0; chn<4; ++chn)
+	for (chn = 0; chn < 4; ++chn)
 	{
-		if (insloop[chn]<0) continue;
+		if (insloop[chn] < 0) continue;
 
 		stop = false;
 
-		for (pos = song_original.order_loop; pos<song_original.order_length; ++pos)
+		for (pos = song_original.order_loop; pos < song_original.order_length; ++pos)
 		{
-			for (row = 0; row<song_original.pattern[pos].length; ++row)
+			for (row = 0; row < song_original.pattern[pos].length; ++row)
 			{
 				ch = &song_original.pattern[pos].row[row].channel[chn];
 
-				if (ch->note>1)
+				if (ch->note > 1)
 				{
-					if (ch->instrument<0) ch->instrument = insloop[chn];
+					if (ch->instrument < 0) ch->instrument = insloop[chn];
 
 					stop = true;
 					break;
@@ -1290,14 +1291,14 @@ void envelopes_cleanup(void)
 {
 	int i, j;
 
-	for (i = 0; i<MAX_ENVELOPES; ++i)
+	for (i = 0; i < MAX_ENVELOPES; ++i)
 	{
-		if (envelopeVolume[i].loop<0)
+		if (envelopeVolume[i].loop < 0)
 		{
-			for (j = envelopeVolume[i].length - 1; j>0; --j) if (!envelopeVolume[i].value[j] && !envelopeVolume[i].value[j - 1]) --envelopeVolume[i].length; else break;
+			for (j = envelopeVolume[i].length - 1; j > 0; --j) if (!envelopeVolume[i].value[j] && !envelopeVolume[i].value[j - 1]) --envelopeVolume[i].length; else break;
 		}
 
-		if (envelopeDuty[i].length>1) envelopeDuty[i].length = 1;
+		if (envelopeDuty[i].length > 1) envelopeDuty[i].length = 1;
 	}
 }
 
@@ -1309,16 +1310,16 @@ void envelope_pitch_convert(void)
 {
 	int i, j, val;
 
-	for (i = 0; i<MAX_ENVELOPES; ++i)
+	for (i = 0; i < MAX_ENVELOPES; ++i)
 	{
 		val = 0;
 
-		for (j = 0; j<envelopePitch[i].length; ++j)
+		for (j = 0; j < envelopePitch[i].length; ++j)
 		{
 			val += envelopePitch[i].value[j];
 
-			if (val<-64) val = -64;
-			if (val> 63) val = 63;
+			if (val < -64) val = -64;
+			if (val > 63) val = 63;
 
 			envelopePitch[i].value[j] = val;
 		}
@@ -1326,14 +1327,14 @@ void envelope_pitch_convert(void)
 }
 
 
-
-void song_text_dump(songStruct *s)
+/*
+void song_text_dump(songStruct* s)
 {
-	const char *noteNames[12] = { "C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-" };
-	const char *typeNames[4] = { "volume","arpeggio","pitch","duty" };
+	const char* noteNames[12] = { "C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-" };
+	const char* typeNames[4] = { "volume","arpeggio","pitch","duty" };
 	int i, j, k, type, note, instrument;
-	envelopeStruct *env;
-	rowStruct *row;
+	envelopeStruct* env;
+	rowStruct* row;
 
 	//general settings
 
@@ -1345,7 +1346,7 @@ void song_text_dump(songStruct *s)
 
 	//instrument settings
 
-	for (i = 0; i<MAX_INSTRUMENTS; ++i)
+	for (i = 0; i < MAX_INSTRUMENTS; ++i)
 	{
 		if (instruments[i].in_use)
 		{
@@ -1360,12 +1361,13 @@ void song_text_dump(songStruct *s)
 
 	//envelope sequences
 
-	for (type = 0; type<4; ++type)
+	for (type = 0; type < 4; ++type)
 	{
-		for (i = 0; i<MAX_ENVELOPES; ++i)
+		for (i = 0; i < MAX_ENVELOPES; ++i)
 		{
 			switch (type)
 			{
+			default: // ** fix build error, overly cautious compiler
 			case 0: env = &envelopeVolume[i]; break;
 			case 1: env = &envelopeArpeggio[i]; break;
 			case 2: env = &envelopePitch[i]; break;
@@ -1376,7 +1378,7 @@ void song_text_dump(songStruct *s)
 			{
 				printf("env.%s %i=", typeNames[type], i);
 
-				for (j = 0; j<env->length; ++j)
+				for (j = 0; j < env->length; ++j)
 				{
 					if (env->loop == j) printf(">");
 
@@ -1392,7 +1394,7 @@ void song_text_dump(songStruct *s)
 
 	//patterns
 
-	for (i = 0; i<s->order_length; ++i)
+	for (i = 0; i < s->order_length; ++i)
 	{
 		printf("order position %i ", i);
 
@@ -1400,13 +1402,13 @@ void song_text_dump(songStruct *s)
 
 		printf("\n\n");
 
-		for (j = 0; j<s->pattern[i].length; ++j)
+		for (j = 0; j < s->pattern[i].length; ++j)
 		{
 			row = &s->pattern[i].row[j];
 
 			printf("%2.2X: ", j);
 
-			for (k = 0; k<channels; ++k)
+			for (k = 0; k < channels; ++k)
 			{
 				note = row->channel[k].note;
 				instrument = row->channel[k].instrument;
@@ -1430,17 +1432,17 @@ void song_text_dump(songStruct *s)
 		printf("\n");
 	}
 }
+*/
 
 
-
-void output_open(const char *filename)
+void output_open(const char* filename)
 {
 	outfile = fopen(filename, "wt");
 }
 
 
 
-int output_dump_byte_array(unsigned char *data, int length, bool test)
+int output_dump_byte_array(unsigned char* data, int length, bool test)
 {
 	int col, ptr;
 
@@ -1449,7 +1451,7 @@ int output_dump_byte_array(unsigned char *data, int length, bool test)
 	ptr = 0;
 	col = 0;
 
-	while (ptr<length)
+	while (ptr < length)
 	{
 		if (!col) fprintf(outfile, "\t%s ", DB);
 
@@ -1473,7 +1475,7 @@ int output_dump_byte_array(unsigned char *data, int length, bool test)
 
 
 
-int output_process_envelope(short int *value, int length, int loop)
+int output_process_envelope(short int* value, int length, int loop)
 {
 	static unsigned char data[MAX_ENVELOPE_LEN];
 	int i, j, val, prev_val, rle_cnt, ptr, ptr_loop, size;
@@ -1486,14 +1488,14 @@ int output_process_envelope(short int *value, int length, int loop)
 	prev_val = value[0] + 1;//prevent rle match
 	rle_cnt = 0;
 
-	for (j = 0; j<length; ++j)
+	for (j = 0; j < length; ++j)
 	{
 		if (j == loop) ptr_loop = ptr;
 
 		val = value[j];
 
-		if (val<-64) val = -64;
-		if (val> 63) val = 63;
+		if (val < -64) val = -64;
+		if (val > 63) val = 63;
 
 		val += 192;
 
@@ -1507,7 +1509,7 @@ int output_process_envelope(short int *value, int length, int loop)
 				}
 				else
 				{
-					while (rle_cnt>126)
+					while (rle_cnt > 126)
 					{
 						data[ptr++] = 126;
 						rle_cnt -= 126;
@@ -1529,14 +1531,14 @@ int output_process_envelope(short int *value, int length, int loop)
 		}
 	}
 
-	if (ptr_loop<0) ptr_loop = ptr - 1; else if (data[ptr_loop]<128) ++ptr_loop;//ptr_loop increased if it points at RLEd repeats of a previous value
+	if (ptr_loop < 0) ptr_loop = ptr - 1; else if (data[ptr_loop] < 128) ++ptr_loop;//ptr_loop increased if it points at RLEd repeats of a previous value
 
 	data[ptr++] = 0;
 	data[ptr++] = ptr_loop;
 
 	size = ptr;
 
-	for (i = 0; i<outputEnvelopeCount; ++i)
+	for (i = 0; i < outputEnvelopeCount; ++i)
 	{
 		if (!memcmp(outputEnvelopes[i].data, data, size)) return i;
 	}
@@ -1552,7 +1554,7 @@ int output_process_envelope(short int *value, int length, int loop)
 
 
 
-int output_header(char *songname, int song)
+int output_header(char* songname, int song)
 {
 	int sub, chn, tempo_pal, tempo_ntsc, size, from, to;
 
@@ -1565,7 +1567,7 @@ int output_header(char *songname, int song)
 
 	size = 5;
 
-	if (song<0)
+	if (song < 0)
 	{
 		from = 0;
 		to = subSongsCount;
@@ -1576,15 +1578,15 @@ int output_header(char *songname, int song)
 		to = from + 1;
 
 	}
-	for (sub = from; sub<to; ++sub)
+	for (sub = from; sub < to; ++sub)
 	{
 		parse_song(sub, true);
 
 		fprintf(outfile, "\t%s ", DW);
 
-		for (chn = 0; chn<4; ++chn)
+		for (chn = 0; chn < 4; ++chn)
 		{
-			if (chn<channels) fprintf(outfile, "%ssong%ich%i,", LL, sub, chn); else fprintf(outfile, "0,");
+			if (chn < channels) fprintf(outfile, "%ssong%ich%i,", LL, sub, chn); else fprintf(outfile, "0,");
 		}
 
 		tempo_pal = 256 * song_original.tempo / (50 * 60 / 24);
@@ -1611,7 +1613,7 @@ int output_header(char *songname, int song)
 int output_instruments(void)
 {
 	int i, size, duty;
-
+	
 	size = 0;
 
 	//add default envelope, used for any undefined envelopes, it simply keeps 0
@@ -1626,62 +1628,96 @@ int output_instruments(void)
 	++outputEnvelopeCount;
 
 	//mark all used envelopes
-
-	for (i = 0; i<MAX_ENVELOPES; ++i)
+	
+	for (i = 0; i < MAX_ENVELOPES; ++i)
 	{
 		envelopeVolume[i].in_use = false;
 		envelopeArpeggio[i].in_use = false;
 		envelopePitch[i].in_use = false;
 	}
 
-	for (i = 0; i<MAX_INSTRUMENTS; ++i)
+	for (i = 0; i < MAX_INSTRUMENTS; ++i)
 	{
 		if (!instruments[i].in_use) continue;
 
-		envelopeVolume[instruments[i].volume].in_use = true;
-		envelopeArpeggio[instruments[i].arpeggio].in_use = true;
-		envelopePitch[instruments[i].pitch].in_use = true;
+		if (instruments[i].volume >= 0)
+		{
+			envelopeVolume[instruments[i].volume].in_use = true;
+		}
+		if (instruments[i].arpeggio >= 0)
+		{
+			envelopeArpeggio[instruments[i].arpeggio].in_use = true;
+		}
+		if (instruments[i].pitch >= 0)
+		{
+			envelopePitch[instruments[i].pitch].in_use = true;
+		}
+		// ** fixed a [-1] undefined behavior bug
 	}
 
 	//convert all envelopes into byte data, add into common list, remove duplicates
 
-	for (i = 0; i<MAX_ENVELOPES; ++i) envelopeVolume[i].out_id = output_process_envelope(envelopeVolume[i].value, envelopeVolume[i].in_use ? envelopeVolume[i].length : 0, envelopeVolume[i].loop);
-	for (i = 0; i<MAX_ENVELOPES; ++i) envelopeArpeggio[i].out_id = output_process_envelope(envelopeArpeggio[i].value, envelopeArpeggio[i].in_use ? envelopeArpeggio[i].length : 0, envelopeArpeggio[i].loop);
-	for (i = 0; i<MAX_ENVELOPES; ++i) envelopePitch[i].out_id = output_process_envelope(envelopePitch[i].value, envelopePitch[i].in_use ? envelopePitch[i].length : 0, envelopePitch[i].loop);
+	for (i = 0; i < MAX_ENVELOPES; ++i) envelopeVolume[i].out_id = output_process_envelope(envelopeVolume[i].value, envelopeVolume[i].in_use ? envelopeVolume[i].length : 0, envelopeVolume[i].loop);
+	for (i = 0; i < MAX_ENVELOPES; ++i) envelopeArpeggio[i].out_id = output_process_envelope(envelopeArpeggio[i].value, envelopeArpeggio[i].in_use ? envelopeArpeggio[i].length : 0, envelopeArpeggio[i].loop);
+	for (i = 0; i < MAX_ENVELOPES; ++i) envelopePitch[i].out_id = output_process_envelope(envelopePitch[i].value, envelopePitch[i].in_use ? envelopePitch[i].length : 0, envelopePitch[i].loop);
 
 	//output instrument list
-
+	
 	fprintf(outfile, "%sinstruments:\n", LL);
-
-	for (i = 0; i<MAX_INSTRUMENTS; ++i)
+	
+	for (i = 0; i < MAX_INSTRUMENTS; ++i) 
 	{
 		if (!instruments[i].in_use) continue;
-
-		if (envelopeDuty[instruments[i].duty].length>0) duty = envelopeDuty[instruments[i].duty].value[0] & 3; else duty = 0;
+		
+		if (envelopeDuty[instruments[i].duty].length > 0) duty = envelopeDuty[instruments[i].duty].value[0] & 3; else duty = 0;
 
 		fprintf(outfile, "\t%s $%2.2x ;instrument $%2.2x\n", DB, (duty << 6) | 0x30, i);
 		fprintf(outfile, "\t%s ", DW);
-		fprintf(outfile, "%senv%i,", LL, envelopeVolume[instruments[i].volume].out_id);
-		fprintf(outfile, "%senv%i,", LL, envelopeArpeggio[instruments[i].arpeggio].out_id);
-		fprintf(outfile, "%senv%i\n", LL, envelopePitch[instruments[i].pitch].out_id);
+		if (instruments[i].volume < 0) // ** fixed a [-1] undefined behavior bug
+		{
+			fprintf(outfile, "%senv0,", LL);
+		}
+		else
+		{
+			fprintf(outfile, "%senv%i,", LL, envelopeVolume[instruments[i].volume].out_id);
+		}
+		if (instruments[i].arpeggio < 0)
+		{
+			fprintf(outfile, "%senv0,", LL);
+		}
+		else
+		{
+			fprintf(outfile, "%senv%i,", LL, envelopeArpeggio[instruments[i].arpeggio].out_id);
+		}
+		if (instruments[i].pitch < 0)
+		{
+			fprintf(outfile, "%senv0\n", LL);
+		}
+		else
+		{
+			fprintf(outfile, "%senv%i\n", LL, envelopePitch[instruments[i].pitch].out_id);
+		}
+		//fprintf(outfile, "%senv%i,", LL, envelopeVolume[instruments[i].volume].out_id);
+		//fprintf(outfile, "%senv%i,", LL, envelopeArpeggio[instruments[i].arpeggio].out_id);
+		//fprintf(outfile, "%senv%i\n", LL, envelopePitch[instruments[i].pitch].out_id);
 		fprintf(outfile, "\t%s $00\n", DB);
 
 		size += 2 * 3 + 2;
 	}
-
+	
 	fprintf(outfile, "\n");
 
 	//output samples list
 
 	//deleted dpcm
 
-	for (i = 0; i<outputEnvelopeCount; ++i)
+	for (i = 0; i < outputEnvelopeCount; ++i)
 	{
 		fprintf(outfile, "%senv%i:\n", LL, i);
 
 		size += output_dump_byte_array(outputEnvelopes[i].data, outputEnvelopes[i].size, false);
 	}
-
+	
 	return size;
 }
 
@@ -1692,14 +1728,14 @@ int output_song(int sub, int spdchn, bool test)
 	static int ins_renumber[MAX_INSTRUMENTS];
 	int i, ins, chn, srow, pos, ptr, note, size, ref, pcnt, pref, len, n1, n2, nrow, empty, ref_len;
 	static packedPatternStruct tptn;
-	rowStruct *row;
-	patternStruct *ptn;
+	rowStruct* row;
+	patternStruct* ptn;
 
 	//prepare instrument renumbering list
 
 	ins = 0;
 
-	for (i = 0; i<MAX_INSTRUMENTS; ++i)
+	for (i = 0; i < MAX_INSTRUMENTS; ++i)
 	{
 		if (instruments[i].in_use)
 		{
@@ -1721,7 +1757,7 @@ int output_song(int sub, int spdchn, bool test)
 
 	if (!test) fprintf(outfile, "\n");
 
-	for (chn = 0; chn<channels; ++chn)
+	for (chn = 0; chn < channels; ++chn)
 	{
 		if (!test)
 		{
@@ -1748,9 +1784,9 @@ int output_song(int sub, int spdchn, bool test)
 			size += output_dump_byte_array(tptn.data, tptn.length, test);
 		}
 
-		for (pos = 0; pos<song_split.order_length; ++pos)
+		for (pos = 0; pos < song_split.order_length; ++pos)
 		{
-			if (!test&&pos == song_split.order_loop) fprintf(outfile, "%ssong%ich%iloop:\n", LL, sub, chn);
+			if (!test && pos == song_split.order_loop) fprintf(outfile, "%ssong%ich%iloop:\n", LL, sub, chn);
 
 			ptr = 0;
 
@@ -1762,7 +1798,7 @@ int output_song(int sub, int spdchn, bool test)
 			srow = 0;
 			ref_len = len;//pattern length without repeating empty rows
 
-			while (srow<len)
+			while (srow < len)
 			{
 				if (ptr >= MAX_PACKED_SIZE) parse_error(0, "Not enough room in the tptn array");
 
@@ -1770,13 +1806,13 @@ int output_song(int sub, int spdchn, bool test)
 
 				note = row->channel[chn].note;
 
-				if (chn == spdchn&&row->speed)//speed change
+				if (chn == spdchn && row->speed)//speed change
 				{
 					tptn.data[ptr++] = 0xfb;
 					tptn.data[ptr++] = row->speed;
 				}
 
-				if (note>0)
+				if (note > 0)
 				{
 					//check if there is instrument change
 
@@ -1789,21 +1825,21 @@ int output_song(int sub, int spdchn, bool test)
 					n1 = 0;
 					n2 = 0;
 
-					if (srow + 0<len)
+					if (srow + 0 < len)
 					{
 						n1 = ptn->row[srow + 0].channel[chn].note;
 
-						if (chn == spdchn&&ptn->row[srow + 0].speed) n1 = 1;
+						if (chn == spdchn && ptn->row[srow + 0].speed) n1 = 1;
 					}
 
-					if (srow + 1<len)
+					if (srow + 1 < len)
 					{
 						n2 = ptn->row[srow + 1].channel[chn].note;
 
-						if (chn == spdchn&&ptn->row[srow + 1].speed) n2 = 1;
+						if (chn == spdchn && ptn->row[srow + 1].speed) n2 = 1;
 					}
 
-					nrow = (!n1&&n2) ? 0x01 : 0x00;//next empty row flag
+					nrow = (!n1 && n2) ? 0x01 : 0x00;//next empty row flag
 
 					tptn.data[ptr++] = ((note - 1) << 1) | nrow;//0 rest note, 1..60 are octaves 1-5
 
@@ -1820,11 +1856,11 @@ int output_song(int sub, int spdchn, bool test)
 
 				empty = 0;
 
-				while (srow<len)
+				while (srow < len)
 				{
 					if (empty >= MAX_REPEAT_CNT) break;
 					if (ptn->row[srow].channel[chn].note) break;
-					if (chn == spdchn&&ptn->row[srow].speed) break;
+					if (chn == spdchn && ptn->row[srow].speed) break;
 
 					++srow;
 					++empty;
@@ -1842,9 +1878,9 @@ int output_song(int sub, int spdchn, bool test)
 
 			ref = -1;
 
-			if (tptn.length>4)	//search data matches that is longer than the reference itself
+			if (tptn.length > 4)	//search data matches that is longer than the reference itself
 			{
-				for (i = 0; i<packedCount; ++i)
+				for (i = 0; i < packedCount; ++i)
 				{
 					if (tptn.length <= packedPatterns[i].length)
 					{
@@ -1857,7 +1893,7 @@ int output_song(int sub, int spdchn, bool test)
 				}
 			}
 
-			if (ref<0)//no match found, put data into output and the common data list
+			if (ref < 0)//no match found, put data into output and the common data list
 			{
 				if (packedCount >= MAX_PACKED_PATTERNS) parse_error(0, "Not enough room in the common data list");
 
@@ -1928,7 +1964,7 @@ void split_song(int factor)
 
 	cnt = 0;
 
-	for (spos = 0; spos<song_original.order_length; ++spos) if (song_original.pattern[spos].length / factor<MIN_PATTERN_LEN) ++cnt;
+	for (spos = 0; spos < song_original.order_length; ++spos) if (song_original.pattern[spos].length / factor < MIN_PATTERN_LEN) ++cnt;
 
 	if (cnt == song_original.order_length) factor = 1;//don't do split in this case, to make optimal split search faster
 
@@ -1941,17 +1977,17 @@ void split_song(int factor)
 
 	dpos = 0;
 
-	for (spos = 0; spos<song_original.order_length; ++spos)
+	for (spos = 0; spos < song_original.order_length; ++spos)
 	{
 		if (spos == song_original.order_loop) song_split.order_loop = dpos;
 
 		nlen = song_original.pattern[spos].length / factor;
 
-		if (nlen<MIN_PATTERN_LEN) nlen = MIN_PATTERN_LEN;
+		if (nlen < MIN_PATTERN_LEN) nlen = MIN_PATTERN_LEN;
 
 		drow = 0;
 
-		for (srow = 0; srow<song_original.pattern[spos].length; ++srow)
+		for (srow = 0; srow < song_original.pattern[spos].length; ++srow)
 		{
 			memcpy(&song_split.pattern[dpos].row[drow], &song_original.pattern[spos].row[srow], sizeof(rowStruct));
 
@@ -1987,7 +2023,7 @@ int process_and_output_song(int sub)
 	best_channel = 0;
 	best_factor = 1;
 
-	for (spdchn = 0; spdchn<channels; ++spdchn)
+	for (spdchn = 0; spdchn < channels; ++spdchn)
 	{
 		for (factor = 1; factor <= song_original.pattern_length / MIN_PATTERN_LEN; ++factor)
 		{
@@ -1995,7 +2031,7 @@ int process_and_output_song(int sub)
 
 			size = output_song(sub, spdchn, true);
 
-			if (size<size_min)
+			if (size < size_min)
 			{
 				size_min = size;
 				best_channel = spdchn;
@@ -2022,15 +2058,17 @@ void exit_proc(void)
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	//FILE *file;
+	//FILE* file;
 	char inname[1024], outname[1024], outname1[1024];
 	int i, size_header, size_instruments, size_song[MAX_SUB_SONGS], size_total, sub;
 	char c;
 	bool separate;
 
-	if (argc<2)
+	printf("\n---famitone version Gameboy Mar 11 2022---\n\n");
+
+	if (argc < 2)
 	{
 		printf("text2dataGB for FamiTone2 GB audio library\n");
 		printf("by Shiru (shiru@mail.ru), 04'17\n\n");
@@ -2044,7 +2082,7 @@ int main(int argc, char *argv[])
 	channels = 4;//process all channels
 	separate = false;//export all subsongs as one file
 
-	for (i = 1; i<argc; ++i)
+	for (i = 1; i < argc; ++i)
 	{
 
 		if (!_stricmp(argv[i], "-ch4"))  channels = 4;
@@ -2093,7 +2131,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-		if (!((c >= 'A'&&c <= 'Z') || (c >= 'a'&&c <= 'z') || (c >= '0'&&c <= '9'))) songName[i] = '_';
+		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) songName[i] = '_';
 	}
 
 	//process data
@@ -2114,7 +2152,7 @@ int main(int argc, char *argv[])
 
 	if (!separate) printf("all songs in single file\n"); else printf("each song in a separate file\n");
 
-	if (text_find_tag("# FamiTracker text export", 0) >= 0)
+	if (text_find_tag("FamiTracker text export", 0) >= 0) // ** removed #
 	{
 		printf("Input format: FamiTracker export\n");
 
@@ -2123,27 +2161,27 @@ int main(int argc, char *argv[])
 			clear_packed_patterns();
 			clear_instruments();
 			parse_instruments();
-
-			for (sub = 0; sub<subSongsCount; ++sub)//mark all used instruments in all subsongs
+			
+			for (sub = 0; sub < subSongsCount; ++sub)//mark all used instruments in all subsongs
 			{
 				clear_song();
 				parse_song(sub, false);
 				song_cleanup_instrument_numbers();
 			}
-
+			
 			envelopes_cleanup();
 			envelope_pitch_convert();
 
 			strcat(outname, ".asm");
 
 			output_open(outname);
-
+			
 			size_header = output_header(songName, -1);
 			size_instruments = output_instruments();
-
+			
 			clear_packed_patterns();
 
-			for (sub = 0; sub<subSongsCount; ++sub)
+			for (sub = 0; sub < subSongsCount; ++sub)
 			{
 				clear_song();
 				parse_song(sub, false);
@@ -2151,7 +2189,6 @@ int main(int argc, char *argv[])
 
 				size_song[sub] = process_and_output_song(sub);
 			}
-
 			output_close();
 
 			size_total = size_header + size_instruments;
@@ -2159,7 +2196,7 @@ int main(int argc, char *argv[])
 			printf("Header:     %i\n", size_header);
 			printf("Instrument: %i\n", size_instruments);
 
-			for (i = 0; i<subSongsCount; ++i)
+			for (i = 0; i < subSongsCount; ++i)
 			{
 				printf("Sub song %i: %i\n", i, size_song[i]);
 				size_total += size_song[i];
@@ -2175,9 +2212,9 @@ int main(int argc, char *argv[])
 			envelopes_cleanup();
 			envelope_pitch_convert();
 
-			for (sub = 0; sub<subSongsCount; ++sub)
+			for (sub = 0; sub < subSongsCount; ++sub)
 			{
-				for (i = 0; i<MAX_INSTRUMENTS; ++i) instruments[i].in_use = false;
+				for (i = 0; i < MAX_INSTRUMENTS; ++i) instruments[i].in_use = false;
 
 				clear_song();
 				parse_song(sub, false);
